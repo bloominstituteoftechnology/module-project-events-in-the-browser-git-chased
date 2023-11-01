@@ -37,6 +37,10 @@ function moduleProject2() {
       row.appendChild(square)
       square.addEventListener('click', () => {
         // 👉 TASK 2 - Use a click handler to target a square 👈
+        if (!square.classList.contains("targeted")){
+          document.querySelector('.targeted').classList.remove('targeted')
+          square.classList.add('targeted')
+        }
       })
     }
   }
@@ -62,13 +66,64 @@ function moduleProject2() {
     mosquito.dataset.status = 'alive'
     allSquares[randomInt].appendChild(mosquito)
   })
-
+  
   document.addEventListener('keydown', evt => {
     // 👉 TASK 3 - Use the arrow keys to highlight a new square 👈
 
+      let keyUp = evt.key === keys.up;
+      let keyDown = evt.key === keys.down;
+      let keyRight = evt.key === keys.right;
+      let keyLeft = evt.key === keys.left;
+      let spaceBar = evt.key === keys.space
+      let targeted = document.querySelector('.targeted');
+      let deadOrAlive = document.querySelectorAll('[data-status=alive]');
+      
+    if (keyUp && targeted.parentElement.previousElementSibling){
+      let idx = Array.from(targeted.parentElement.children).indexOf(targeted)
+      targeted.classList.remove('targeted');
+      targeted.parentElement.previousElementSibling.children[idx].classList.add('targeted')
+      
+    } else if (keyDown && targeted.parentElement.nextElementSibling){
+      let idx = Array.from(targeted.parentElement.children).indexOf(targeted)
+      targeted.classList.remove('targeted');
+      targeted.parentElement.nextElementSibling.children[idx].classList.add('targeted');
+      
+    } else if (keyRight && targeted.nextElementSibling){
+      targeted.classList.remove('targeted');
+      targeted.nextElementSibling.classList.add('targeted')
+      
+    } else if (keyLeft && targeted.previousElementSibling){
+      targeted.classList.remove('targeted');
+      targeted.previousElementSibling.classList.add('targeted')
+
+    } 
+
     // 👉 TASK 4 - Use the space bar to exterminate a mosquito 👈
 
+    else if (spaceBar ){
+      if (targeted.firstChild && targeted.firstChild.dataset.status === 'alive'){
+      targeted.firstChild.dataset.status = 'dead';
+      targeted.firstChild.parentElement.style.backgroundColor = 'red'}
+      let deadOrAlive = document.querySelectorAll('[data-status=alive]');
+      if (!deadOrAlive.length){
+        let time = getTimeElapsed()
+        document.querySelector('p.info').textContent = `Extermination completed in ${time / 1000} seconds!`
+        console.log('Game Over')
+        let restartBtn = document.createElement('button');
+        restartBtn.textContent = 'Restart'
+        restartBtn.addEventListener('click', () => {
+          location.reload()
+        })
+        
+        document.querySelector('h2').insertAdjacentElement("beforeend", restartBtn)
+      }
+      
+    }
+
     // 👉 TASK 5 - End the game 👈
+    
+    
+
   })
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
